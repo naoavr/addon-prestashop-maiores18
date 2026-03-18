@@ -1,0 +1,64 @@
+Aqui está o resumo completo do módulo AgeVerify v1.1.4 para PrestaShop:
+
+Funcionalidade Principal
+Exibe um popup de verificação de idade em forma circular no frontend da loja, obrigando o visitante a confirmar a sua idade antes de aceder ao conteúdo. Compatível com PrestaShop 1.7 e 8.x.
+
+Frontend — Popup
+Popup circular com fundo semitransparente a bloquear a página.
+
+Mostra o logo da loja no centro do círculo.
+
+Mensagem configurável para informar o utilizador.
+
+Dois botões: "Sou maior de idade" (confirma e fecha o popup) e "Sou menor de idade" (redireciona ou não faz nada).
+
+Após confirmar, grava um cookie por 30 dias — o popup não volta a aparecer durante esse período.
+
+Sem flash entre páginas: o overlay está escondido por CSS (display:none) e só é mostrado pelo JS quando necessário.
+
+Scroll da página bloqueado enquanto o popup está visível.
+
+Backoffice — Configuração
+Idade mínima configurável (padrão: 18).
+
+URL de redirecionamento para menores de idade (opcional).
+
+Mensagem do popup editável.
+
+Texto dos botões de confirmação e rejeição editáveis.
+
+Cores totalmente configuráveis:
+
+Fundo do círculo
+
+Cor do texto
+
+Fundo e texto do botão "confirmar"
+
+Fundo e texto do botão "rejeitar"
+
+Paletes de cores visuais com swatches clicáveis e preview em tempo real.
+
+Tamanho da fonte configurável (px).
+
+Largura máxima do logo configurável (px).
+
+Identidade & Créditos
+Logo do módulo (logo.svg) personalizado.
+
+Painel de créditos fixo no backoffice com link para iddigital.pt.
+
+Author definido como iddigital.pt no código do módulo.
+
+Técnico
+Estrutura de ficheiros:
+
+ageverify.php — classe principal
+
+views/templates/hook/ageverify.tpl — popup frontend
+
+views/templates/hook/config.tpl — painel de configuração BO
+
+views/css/ageverify.css — estilos frontend
+
+logo.svg — logo do módulo
