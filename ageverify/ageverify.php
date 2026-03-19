@@ -99,19 +99,38 @@ class AgeVerify extends Module
         $output = '';
 
         if (Tools::isSubmit('submitAgeVerify')) {
+            // Validate redirect URL: parse the scheme so that javascript:/data: URIs
+            // are rejected regardless of casing or surrounding path segments.
+            $redirectUrl = trim(Tools::getValue('AGEVERIFY_REDIRECT_URL'));
+            if ($redirectUrl !== '') {
+                $scheme = strtolower((string) parse_url($redirectUrl, PHP_URL_SCHEME));
+                if (!in_array($scheme, ['http', 'https'], true)) {
+                    $redirectUrl = '';
+                }
+            }
+
+            // Validate hex colour values (#RGB or #RRGGBB) to prevent CSS injection.
+            $hexColorPattern = '/^#[0-9a-fA-F]{3}([0-9a-fA-F]{3})?$/';
+            $colors = [
+                'AGEVERIFY_BG_COLOR'     => '#ffffff',
+                'AGEVERIFY_TEXT_COLOR'   => '#000000',
+                'AGEVERIFY_BTN_YES_BG'   => '#28a745',
+                'AGEVERIFY_BTN_YES_TEXT' => '#ffffff',
+                'AGEVERIFY_BTN_NO_BG'    => '#dc3545',
+                'AGEVERIFY_BTN_NO_TEXT'  => '#ffffff',
+            ];
+
             Configuration::updateValue('AGEVERIFY_MIN_AGE',        (int)Tools::getValue('AGEVERIFY_MIN_AGE'));
-            Configuration::updateValue('AGEVERIFY_REDIRECT_URL',   Tools::getValue('AGEVERIFY_REDIRECT_URL'));
+            Configuration::updateValue('AGEVERIFY_REDIRECT_URL',   $redirectUrl);
             Configuration::updateValue('AGEVERIFY_MESSAGE',        Tools::getValue('AGEVERIFY_MESSAGE'));
             Configuration::updateValue('AGEVERIFY_BTN_YES',        Tools::getValue('AGEVERIFY_BTN_YES'));
             Configuration::updateValue('AGEVERIFY_BTN_NO',         Tools::getValue('AGEVERIFY_BTN_NO'));
-            Configuration::updateValue('AGEVERIFY_BG_COLOR',       Tools::getValue('AGEVERIFY_BG_COLOR'));
-            Configuration::updateValue('AGEVERIFY_TEXT_COLOR',     Tools::getValue('AGEVERIFY_TEXT_COLOR'));
-            Configuration::updateValue('AGEVERIFY_BTN_YES_BG',     Tools::getValue('AGEVERIFY_BTN_YES_BG'));
-            Configuration::updateValue('AGEVERIFY_BTN_YES_TEXT',   Tools::getValue('AGEVERIFY_BTN_YES_TEXT'));
-            Configuration::updateValue('AGEVERIFY_BTN_NO_BG',      Tools::getValue('AGEVERIFY_BTN_NO_BG'));
-            Configuration::updateValue('AGEVERIFY_BTN_NO_TEXT',    Tools::getValue('AGEVERIFY_BTN_NO_TEXT'));
-            Configuration::updateValue('AGEVERIFY_FONT_SIZE',      Tools::getValue('AGEVERIFY_FONT_SIZE'));
-            Configuration::updateValue('AGEVERIFY_LOGO_MAX_WIDTH', Tools::getValue('AGEVERIFY_LOGO_MAX_WIDTH'));
+            foreach ($colors as $field => $fallback) {
+                $val = trim(Tools::getValue($field));
+                Configuration::updateValue($field, preg_match($hexColorPattern, $val) ? $val : $fallback);
+            }
+            Configuration::updateValue('AGEVERIFY_FONT_SIZE',      (int)Tools::getValue('AGEVERIFY_FONT_SIZE'));
+            Configuration::updateValue('AGEVERIFY_LOGO_MAX_WIDTH', (int)Tools::getValue('AGEVERIFY_LOGO_MAX_WIDTH'));
 
             $output .= $this->displayConfirmation($this->l('Settings updated'));
         }
